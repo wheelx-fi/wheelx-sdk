@@ -56,18 +56,35 @@ export interface OrderResponse {
   order_id: string;
   from_chain: number;
   from_token: string;
+  from_token_info?: TokenInfo | null;
   from_address: string;
   from_amount: string;
   to_chain: number;
   to_token: string;
+  to_token_info?: TokenInfo | null;
   to_amount: string;
   to_address: string;
   open_tx_hash: string;
   open_block: number;
   open_timestamp: string;
-  status: string;
+  fill_tx_hash?: string | null;
+  fill_block?: number | null;
+  fill_timestamp?: string | null;
+  status: OrderStatus;
   points: string;
 }
+
+export interface TokenInfo {
+  symbol: string;
+  name: string;
+  decimals: number;
+  address: string;
+  chain_id: number;
+  logo: string;
+  tags: string[];
+}
+
+export type OrderStatus = 'Open' | 'Filled' | 'Failed' | 'Refund';
 
 export interface SDKConfig {
   baseUrl?: string;

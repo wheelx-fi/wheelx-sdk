@@ -51,6 +51,13 @@ async function main() {
     console.log(`Gas: ${quote.tx.gas}`);
     console.log(`Data: ${quote.tx.data.substring(0, 50)}...`);
 
+    // Example of checking order status
+    console.log('\n=== Order Status Query Example ===');
+    console.log(`You can check order status later using request ID: ${quote.request_id}`);
+    console.log('Example code:');
+    console.log(`  const orderStatus = await sdk.getOrderStatus('${quote.request_id}');`);
+    console.log(`  console.log('Order Status:', orderStatus.status);`);
+
     // Example of transaction execution (commented out for safety)
     // Uncomment and provide your private key to execute
     //

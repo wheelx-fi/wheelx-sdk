@@ -71,22 +71,38 @@ type QuoteResponse struct {
 	Points        string               `json:"points"`
 }
 
+// TokenInfo represents token information
+type TokenInfo struct {
+	Symbol   string   `json:"symbol"`
+	Name     string   `json:"name"`
+	Decimals int      `json:"decimals"`
+	Address  string   `json:"address"`
+	ChainID  int      `json:"chain_id"`
+	Logo     string   `json:"logo"`
+	Tags     []string `json:"tags"`
+}
+
 // OrderResponse represents order status response
 type OrderResponse struct {
-	OrderId       string `json:"order_id"`
-	FromChain     int    `json:"from_chain"`
-	FromToken     string `json:"from_token"`
-	FromAddress   string `json:"from_address"`
-	FromAmount    string `json:"from_amount"`
-	ToChain       int    `json:"to_chain"`
-	ToToken       string `json:"to_token"`
-	ToAmount      string `json:"to_amount"`
-	ToAddress     string `json:"to_address"`
-	OpenTxHash    string `json:"open_tx_hash"`
-	OpenBlock     int    `json:"open_block"`
-	OpenTimestamp string `json:"open_timestamp"`
-	Status        string `json:"status"`
-	Points        string `json:"points"`
+	OrderId         string     `json:"order_id"`
+	FromChain       int        `json:"from_chain"`
+	FromToken       string     `json:"from_token"`
+	FromTokenInfo   *TokenInfo `json:"from_token_info,omitempty"`
+	FromAddress     string     `json:"from_address"`
+	FromAmount      string     `json:"from_amount"`
+	ToChain         int        `json:"to_chain"`
+	ToToken         string     `json:"to_token"`
+	ToTokenInfo     *TokenInfo `json:"to_token_info,omitempty"`
+	ToAmount        string     `json:"to_amount"`
+	ToAddress       string     `json:"to_address"`
+	OpenTxHash      string     `json:"open_tx_hash"`
+	OpenBlock       int        `json:"open_block"`
+	OpenTimestamp   string     `json:"open_timestamp"`
+	FillTxHash      *string    `json:"fill_tx_hash,omitempty"`
+	FillBlock       *int       `json:"fill_block,omitempty"`
+	FillTimestamp   *string    `json:"fill_timestamp,omitempty"`
+	Status          string     `json:"status"`
+	Points          string     `json:"points"`
 }
 
 // WheelXSDK provides methods to interact with WheelX API

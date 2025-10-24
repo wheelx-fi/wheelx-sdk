@@ -51,6 +51,13 @@ def main():
         print(f"Gas: {quote.tx.gas}")
         print(f"Data: {quote.tx.data[:50]}...")
 
+        # Example of checking order status
+        print(f"\n=== Order Status Query Example ===")
+        print(f"You can check order status later using request ID: {quote.request_id}")
+        print("Example code:")
+        print(f"  order_status = sdk.get_order_status('{quote.request_id}')")
+        print(f"  print('Order Status:', order_status.status)")
+
         # Example of transaction execution (commented out for safety)
         # Uncomment and provide your private key to execute
         #

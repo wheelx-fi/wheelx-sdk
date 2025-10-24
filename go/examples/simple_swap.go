@@ -62,6 +62,16 @@ func main() {
 		fmt.Printf("Data: %s\n", quote.Tx.Data)
 	}
 
+	// Example of checking order status
+	fmt.Println("\n=== Order Status Query Example ===")
+	fmt.Printf("You can check order status later using request ID: %s\n", quote.RequestId)
+	fmt.Println("Example code:")
+	fmt.Printf("  orderStatus, err := sdk.GetOrderStatus(ctx, \"%s\")\n", quote.RequestId)
+	fmt.Printf("  if err != nil {\n")
+	fmt.Printf("      log.Fatal(err)\n")
+	fmt.Printf("  }\n")
+	fmt.Printf("  fmt.Println(\"Order Status:\", orderStatus.Status)\n")
+
 	// Example of transaction execution (commented out for safety)
 	// Uncomment and provide your private key to execute
 	//

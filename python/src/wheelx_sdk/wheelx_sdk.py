@@ -51,6 +51,42 @@ class PriceImpactFormatted:
 
 
 @dataclass
+class TokenInfo:
+    """Token information"""
+    symbol: str
+    name: str
+    decimals: int
+    address: str
+    chain_id: int
+    logo: str
+    tags: list[str]
+
+
+@dataclass
+class OrderResponse:
+    """Order status response data"""
+    order_id: str
+    from_chain: int
+    from_token: str
+    from_token_info: Optional[TokenInfo]
+    from_address: str
+    from_amount: str
+    to_chain: int
+    to_token: str
+    to_token_info: Optional[TokenInfo]
+    to_amount: str
+    to_address: str
+    open_tx_hash: str
+    open_block: int
+    open_timestamp: str
+    fill_tx_hash: Optional[str]
+    fill_block: Optional[int]
+    fill_timestamp: Optional[str]
+    status: str
+    points: str
+
+
+@dataclass
 class QuoteResponse:
     """Quote response data"""
     request_id: str
@@ -156,7 +192,7 @@ class WheelXSDK:
             points=data.get("points", "0")
         )
 
-    def get_order_status(self, request_id: str) -> Dict[str, Any]:
+    def get_order_status(self, request_id: str) -> OrderResponse:
         """
         Get order status by request ID
 
@@ -164,12 +200,65 @@ class WheelXSDK:
             request_id: Quote request ID
 
         Returns:
-            Dict: Order status information
+            OrderResponse: Order status information
+
+        Raises:
+            Exception: If API request fails
         """
         url = f"{self.base_url}/v1/order/{request_id}"
         response = self.session.get(url)
         response.raise_for_status()
-        return response.json()
+
+        data = response.json()
+
+        # Parse token info if present
+        from_token_info_data = data.get("from_token_info")
+        from_token_info = None
+        if from_token_info_data:
+            from_token_info = TokenInfo(
+                symbol=from_token_info_data.get("symbol"),
+                name=from_token_info_data.get("name"),
+                decimals=from_token_info_data.get("decimals"),
+                address=from_token_info_data.get("address"),
+                chain_id=from_token_info_data.get("chain_id"),
+                logo=from_token_info_data.get("logo"),
+                tags=from_token_info_data.get("tags", [])
+            )
+
+        to_token_info_data = data.get("to_token_info")
+        to_token_info = None
+        if to_token_info_data:
+            to_token_info = TokenInfo(
+                symbol=to_token_info_data.get("symbol"),
+                name=to_token_info_data.get("name"),
+                decimals=to_token_info_data.get("decimals"),
+                address=to_token_info_data.get("address"),
+                chain_id=to_token_info_data.get("chain_id"),
+                logo=to_token_info_data.get("logo"),
+                tags=to_token_info_data.get("tags", [])
+            )
+
+        return OrderResponse(
+            order_id=data.get("order_id"),
+            from_chain=data.get("from_chain"),
+            from_token=data.get("from_token"),
+            from_token_info=from_token_info,
+            from_address=data.get("from_address"),
+            from_amount=data.get("from_amount"),
+            to_chain=data.get("to_chain"),
+            to_token=data.get("to_token"),
+            to_token_info=to_token_info,
+            to_amount=data.get("to_amount"),
+            to_address=data.get("to_address"),
+            open_tx_hash=data.get("open_tx_hash"),
+            open_block=data.get("open_block"),
+            open_timestamp=data.get("open_timestamp"),
+            fill_tx_hash=data.get("fill_tx_hash"),
+            fill_block=data.get("fill_block"),
+            fill_timestamp=data.get("fill_timestamp"),
+            status=data.get("status"),
+            points=data.get("points", "0")
+        )
 
 
 class TransactionExecutor:
