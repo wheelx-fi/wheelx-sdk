@@ -1,0 +1,55 @@
+{
+  "name": "@wheelx/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for WheelX quote API and transaction execution",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "keywords": [
+    "wheelx",
+    "defi",
+    "swap",
+    "bridge",
+    "ethereum",
+    "web3",
+    "typescript",
+    "sdk"
+  ],
+  "author": "WheelX <dev@wheelx.fi>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wheelx/wheelx-sdk-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wheelx/wheelx-sdk-typescript/issues"
+  },
+  "homepage": "https://github.com/wheelx/wheelx-sdk-typescript#readme",
+  "dependencies": {
+    "ethers": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "ethers": "^6.0.0"
+  }
+}

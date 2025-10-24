@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wheelx-sdk"
+version = "0.1.0"
+description = "Python SDK for WheelX quote API and transaction execution"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "WheelX", email = "dev@wheelx.fi"}
+]
+keywords = ["wheelx", "defi", "swap", "bridge", "ethereum", "web3"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "requests>=2.25.0",
+]
+
+[project.optional-dependencies]
+web3 = ["web3>=5.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/wheelx/wheelx-sdk-python"
+Bug Reports = "https://github.com/wheelx/wheelx-sdk-python/issues"
+Source = "https://github.com/wheelx/wheelx-sdk-python"
+
+[tool.setuptools.packages.find]
+where = ["src"]
