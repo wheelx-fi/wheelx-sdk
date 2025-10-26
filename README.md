@@ -9,6 +9,7 @@ This repository contains SDK implementations in multiple programming languages f
 - **TypeScript SDK**: Complete implementation with ethers.js transaction execution (browser & Node.js)
 - **Python SDK**: Complete implementation with web3 transaction execution
 - **Go SDK**: Complete implementation with Ethereum transaction execution
+- **MCP Server**: Model Context Protocol server for AI assistants and applications
 
 ## Quick Links
 
@@ -32,6 +33,7 @@ wheelx-sdk/
 ├── python/               # Python SDK
 │   ├── src/wheelx_sdk/   # Source code
 │   ├── examples/         # Usage examples
+│   ├── mcp_server.py     # MCP server implementation
 │   ├── setup.py          # Package configuration
 │   ├── pyproject.toml    # Modern package config
 │   └── README.md         # Python SDK documentation
@@ -43,6 +45,11 @@ wheelx-sdk/
 ├── docs/                 # Documentation
 │   ├── QUOTE_ENDPOINT_DOCUMENTATION.md  # API reference
 │   └── PROJECT_OVERVIEW.md              # Project overview
+├── shell.nix             # Nix development shell
+├── flake.nix             # Nix flake configuration
+├── .envrc                # direnv configuration
+├── setup_venv.sh         # Virtualenv setup script
+├── DEVELOPMENT.md        # Development guide
 └── README.md             # This file
 ```
 
@@ -76,6 +83,12 @@ wheelx-sdk/
 - `go-ethereum` integration for transaction execution
 - Context-aware operations
 
+#### MCP Server
+- FastMCP-based server implementation
+- Standardized tools and resources for AI assistants
+- Cross-chain swap and bridge operations
+- Real-time quote and order tracking
+
 ## Getting Started
 
 ### TypeScript
@@ -101,6 +114,23 @@ cd go
 go mod download
 # See go/README.md for detailed usage
 ```
+
+### MCP Server
+
+```bash
+# Using Nix + direnv (recommended)
+direnv allow
+
+# Or using virtualenv
+./setup_venv.sh
+source venv/bin/activate
+
+# Run the server
+cd python
+python mcp_server.py
+```
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for detailed MCP server development setup.
 
 ## API Reference
 
