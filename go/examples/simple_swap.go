@@ -38,7 +38,7 @@ func main() {
 	fmt.Printf("Fee: %s USDT\n", quote.Fee)
 	fmt.Printf("Min Receive: %s USDT\n", quote.MinReceive)
 	fmt.Printf("Slippage: %.2f%%\n", float64(quote.Slippage)/100)
-	fmt.Printf("Estimated Time: %d seconds\n", quote.EstimatedTime)
+	fmt.Printf("Estimated Time: %.1f seconds\n", quote.EstimatedTime)
 	fmt.Printf("Points Earned: %s\n", quote.Points)
 
 	// Check if approval is needed
@@ -46,15 +46,15 @@ func main() {
 		fmt.Println("\n=== Approval Required ===")
 		fmt.Printf("Token: %s\n", quote.Approve.Token)
 		fmt.Printf("Spender: %s\n", quote.Approve.Spender)
-		fmt.Printf("Amount: %d\n", quote.Approve.Amount)
+		fmt.Printf("Amount: %s\n", quote.Approve.Amount)
 	}
 
 	// Show transaction details
 	fmt.Println("\n=== Transaction Details ===")
 	fmt.Printf("To: %s\n", quote.Tx.To)
-	fmt.Printf("Value: %d wei\n", quote.Tx.Value)
+	fmt.Printf("Value: %s wei\n", quote.Tx.Value)
 	if quote.Tx.Gas != nil {
-		fmt.Printf("Gas: %d\n", *quote.Tx.Gas)
+		fmt.Printf("Gas: %s\n", *quote.Tx.Gas)
 	}
 	if len(quote.Tx.Data) > 50 {
 		fmt.Printf("Data: %s...\n", quote.Tx.Data[:50])

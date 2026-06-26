@@ -8,6 +8,7 @@ import (
 	"io"
 	"math/big"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -30,20 +31,20 @@ type QuoteRequest struct {
 
 // Tx represents transaction data
 type Tx struct {
-	To                   string `json:"to"`
-	Value                int    `json:"value"`
-	Data                 string `json:"data"`
-	ChainId              *int   `json:"chainId,omitempty"`
-	Gas                  *int   `json:"gas,omitempty"`
-	MaxFeePerGas         *int   `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *int   `json:"maxPriorityFeePerGas,omitempty"`
+	To                   string  `json:"to"`
+	Value                string  `json:"value"`
+	Data                 string  `json:"data"`
+	ChainId              *int    `json:"chainId,omitempty"`
+	Gas                  *string `json:"gas,omitempty"`
+	MaxFeePerGas         *string `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *string `json:"maxPriorityFeePerGas,omitempty"`
 }
 
 // ApproveAction represents approval transaction data
 type ApproveAction struct {
 	Token   string `json:"token"`
 	Spender string `json:"spender"`
-	Amount  int    `json:"amount"`
+	Amount  string `json:"amount"`
 }
 
 // PriceImpactFormatted represents price impact breakdown
@@ -53,22 +54,44 @@ type PriceImpactFormatted struct {
 	DstGasFee string `json:"dst_gas_fee"`
 }
 
+// RouteInfo represents route information (router name + logo)
+type RouteInfo struct {
+	Name string `json:"name"`
+	Logo string `json:"logo"`
+}
+
+// QuoteItem represents an individual router quote within quotes[] array
+type QuoteItem struct {
+	RequestId string      `json:"request_id"`
+	Router    string      `json:"router"`
+	AmountOut string      `json:"amount_out"`
+	Tx        Tx          `json:"tx"`
+	Routes    []RouteInfo `json:"routes"`
+	GasFee    *string     `json:"gas_fee,omitempty"`
+}
+
 // QuoteResponse represents the quote response
 type QuoteResponse struct {
-	RequestId     string               `json:"request_id"`
-	AmountOut     string               `json:"amount_out"`
-	Fee           string               `json:"fee"`
-	Tx            Tx                   `json:"tx"`
-	Approve       *ApproveAction       `json:"approve,omitempty"`
-	Slippage      int                  `json:"slippage"`
-	MinReceive    string               `json:"min_receive"`
-	EstimatedTime int                  `json:"estimated_time"`
-	Recipient     string               `json:"recipient"`
-	RouterType    string               `json:"router_type"`
-	PriceImpact   PriceImpactFormatted `json:"price_impact"`
-	Router        string               `json:"router"`
-	CreatedAt     string               `json:"created_at"`
-	Points        string               `json:"points"`
+	RequestId      string               `json:"request_id"`
+	AmountOut      string               `json:"amount_out"`
+	Fee            string               `json:"fee"`
+	Tx             Tx                   `json:"tx"`
+	Approve        *ApproveAction        `json:"approve,omitempty"`
+	Slippage       int                  `json:"slippage"`
+	MinReceive     string               `json:"min_receive"`
+	EstimatedTime  float64              `json:"estimated_time"`
+	Recipient      string               `json:"recipient"`
+	RouterType     string               `json:"router_type"`
+	PriceImpact    PriceImpactFormatted `json:"price_impact"`
+	Router         string               `json:"router"`
+	CreatedAt      string               `json:"created_at"`
+	Points         string               `json:"points"`
+	Quotes         []QuoteItem          `json:"quotes"`
+	Routes         []RouteInfo          `json:"routes"`
+	DepositAddress *string              `json:"deposit_address,omitempty"`
+	GasFee         *string              `json:"gas_fee,omitempty"`
+	BridgeOrderId  *string              `json:"bridge_order_id,omitempty"`
+	QuoteMessage   *string              `json:"quote_message,omitempty"`
 }
 
 // TokenInfo represents token information
@@ -234,12 +257,24 @@ func (e *TransactionExecutor) BuildTransaction(ctx context.Context, txData Tx, f
 	data := common.FromHex(txData.Data)
 	to := common.HexToAddress(txData.To)
 
+	// Parse Value from string to big.Int
+	value := new(big.Int)
+	if txData.Value != "" {
+		value.SetString(txData.Value, 10)
+	}
+
+	// Parse Gas from string
+	var gasLimit uint64
+	if txData.Gas != nil && *txData.Gas != "" {
+		gasLimit, _ = strconv.ParseUint(*txData.Gas, 10, 64)
+	}
+
 	// Create transaction
 	tx := types.NewTx(&types.LegacyTx{
 		Nonce:    nonce,
 		To:       &to,
-		Value:    big.NewInt(int64(txData.Value)),
-		Gas:      uint64(*txData.Gas),
+		Value:    value,
+		Gas:      gasLimit,
 		GasPrice: gasPrice,
 		Data:     data,
 	})
@@ -280,14 +315,24 @@ func (e *TransactionExecutor) BuildEIP1559Transaction(ctx context.Context, txDat
 	to := common.HexToAddress(txData.To)
 
 	// Create EIP-1559 transaction
+	// Parse Value and Gas from string
+	eipValue := new(big.Int)
+	if txData.Value != "" {
+		eipValue.SetString(txData.Value, 10)
+	}
+	var eipGas uint64
+	if txData.Gas != nil && *txData.Gas != "" {
+		eipGas, _ = strconv.ParseUint(*txData.Gas, 10, 64)
+	}
+
 	tx := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
 		Nonce:     nonce,
 		GasTipCap: gasTipCap,
 		GasFeeCap: gasFeeCap,
-		Gas:       uint64(*txData.Gas),
+		Gas:       eipGas,
 		To:        &to,
-		Value:     big.NewInt(int64(txData.Value)),
+		Value:     eipValue,
 		Data:      data,
 	})
 
@@ -378,7 +423,7 @@ func main() {
 	if quote.Approve != nil {
 		fmt.Printf("Approval needed for token: %s\n", quote.Approve.Token)
 		fmt.Printf("Spender: %s\n", quote.Approve.Spender)
-		fmt.Printf("Amount: %d\n", quote.Approve.Amount)
+		fmt.Printf("Amount: %s\n", quote.Approve.Amount)
 	}
 
 	// Example transaction execution (requires Ethereum client and private key)
